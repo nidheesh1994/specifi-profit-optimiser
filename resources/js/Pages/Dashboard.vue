@@ -37,7 +37,7 @@ import { Head, Link } from '@inertiajs/vue3';
                 <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
                     <h3 class="text-lg font-semibold mb-2">Product List</h3>
                     <p class="text-sm text-gray-600 mb-4">Manage product prices, costs, and availability.</p>
-                    <Link :href="'#'" class="text-indigo-600 hover:underline text-sm">View products →</Link>
+                    <Link :href="route('products.index')" class="text-indigo-600 hover:underline text-sm">View products →</Link>
                 </div>
 
                 <!-- Settings -->
