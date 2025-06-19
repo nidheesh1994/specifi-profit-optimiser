@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -27,7 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::post('/settings/test-connection', [SettingController::class, 'testConnection'])->name('settings.test-connection');
 
 });
 
