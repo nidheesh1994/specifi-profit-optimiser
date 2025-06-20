@@ -180,7 +180,7 @@ const createQuote = () => {
                 <input type="text" v-model="searchQuery" placeholder="Search products..."
                     class="w-full border px-3 py-2 rounded mb-4" />
 
-                <div class="max-h-80 overflow-y-auto border rounded">
+                <div class="max-h-80 overflow-y-auto border rounded mb-4">
                     <table class="w-full text-left">
                         <thead class="bg-gray-100 sticky top-0">
                             <tr>
