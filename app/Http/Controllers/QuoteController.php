@@ -98,8 +98,14 @@ class QuoteController extends Controller
         ]);
     }
 
-    public function generateSuggestion(Quote $quote)
+    public function generateSuggestion(Request $request, Quote $quote)
     {
+        $request->validate([
+            'context' => 'nullable|string|max:1000',
+        ]);
+
+        $context = $request->input('context');
+
         $settings = Setting::where('user_id', Auth::id())->firstOrFail();
 
         $productIds = $quote->products ?? [];
@@ -122,24 +128,29 @@ class QuoteController extends Controller
             'health_status' => $quote->health_status,
         ];
 
-        $prompt = "Given the quote data below, provide:\n
+        $prompt = "Given the quote data below, provide details for the following. Below is the instructions. Use your own headings:\n
                     - Adjustments to meet target margins\n
                     - Labor or resource allocation improvements\n
                     - Suggested product swaps if needed\n
-                    - A client-friendly profitability summary\n
-                Quote Data:\n" . json_encode($input, JSON_PRETTY_PRINT);
+                    - profitability summary\n";
+
+        if (!empty($context)) {
+            $prompt .= "Additional context to consider:\n" . $context . "\n";
+        }
+
+        $prompt .= "\nQuote Data:\n" . json_encode($input, JSON_PRETTY_PRINT);
 
         try {
             $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $settings->api_key,
+                'Authorization' => 'Bearer ' . $settings->api_key,
             ])->post('https://api.openai.com/v1/chat/completions', [
-                'model' => "gpt-4.1",
-                'messages' => [
-                    ['role' => 'system', 'content' => 'You are a helpful business analyst. You starts with "Here’s an analysis and recommendations based on your quote data:"'],
-                    ['role' => 'user', 'content' => $prompt],
-                ],
-                'max_tokens' => 500
-                ]);
+                        'model' => "gpt-4.1",
+                        'messages' => [
+                            ['role' => 'system', 'content' => 'You are a helpful business analyst. You starts with "Here’s an analysis and recommendations based on your quote data:"'],
+                            ['role' => 'user', 'content' => $prompt],
+                        ],
+                        'max_tokens' => 500
+                    ]);
         } catch (\Exception $e) {
             return redirect()->route('quotes.show', $quote->id)->withErrors(['error' => 'Failed to generate AI suggestions: ' . $e->getMessage()]);
         }

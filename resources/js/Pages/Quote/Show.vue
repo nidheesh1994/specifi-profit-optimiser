@@ -20,12 +20,14 @@ const productMargins = computed(() =>
 
 
 const loadingSuggestion = ref(false);
+const showSuggestion = ref(true);
+const aiContext = ref('');
 
 const generateAISuggestion = () => {
     loadingSuggestion.value = true;
     router.post(
         route('quotes.generateSuggestion', props.quote.id),
-        {},
+        { context: aiContext.value },
         {
             preserveScroll: true,
             onFinish: () => loadingSuggestion.value = false
@@ -82,28 +84,32 @@ const generateAISuggestion = () => {
                     <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
                 </div>
 
-                <div class="mb-6">
+                <div class="mb-6 flex">
                     <strong>Health Status:</strong>
-                    <span :class="{
-                        'text-green-600': quote.health_status === 'green',
-                        'text-yellow-600': quote.health_status === 'amber',
-                        'text-red-600': quote.health_status === 'red'
-                    }">
-                        {{ quote.health_status.toUpperCase() }}
-                    </span>
+                    <div class="w-6 h-6 rounded ml-4" :class="{
+                        'bg-green-500': quote.health_status === 'green',
+                        'bg-yellow-400': quote.health_status === 'amber',
+                        'bg-red-500': quote.health_status === 'red'
+                    }" title="Health Status"></div>
                 </div>
 
-                <div class="mb-6">
+                <div class="mb-6 flex items-center space-x-4">
+                    <input v-model="aiContext" type="text" class="border px-3 py-2 rounded w-full md:w-2/3"
+                        placeholder="Optional context for AI suggestion..." />
                     <button @click="generateAISuggestion"
                         class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
                         :disabled="loadingSuggestion">
-                        {{ loadingSuggestion ? 'Generating Suggestion...' : 'Generate AI Suggestion' }}
+                        {{ loadingSuggestion ? 'Generating...' : 'Generate AI Suggestion' }}
                     </button>
                 </div>
 
                 <div v-if="quote.ai_suggestions" class="mb-6">
-                    <h3 class="font-semibold mb-2">AI Suggestions</h3>
-                    <div class="bg-gray-50 p-4 rounded shadow whitespace-pre-line">
+                    <button @click="showSuggestion = !showSuggestion" class="text-sm text-blue-600 underline mb-2">
+                        {{ showSuggestion ? 'Hide' : 'Show' }} AI Suggestion
+                    </button>
+
+                    <div v-if="showSuggestion" class="bg-gray-50 p-4 rounded shadow whitespace-pre-line">
+                        <h3 class="font-semibold mb-2">AI Suggestions</h3>
                         {{ quote.ai_suggestions }}
                     </div>
                 </div>
