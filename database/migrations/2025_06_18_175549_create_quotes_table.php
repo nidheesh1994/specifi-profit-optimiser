@@ -13,8 +13,6 @@ return new class extends Migration {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            $table->string('name')->nullable(); // Optional quote name
             $table->json('products');           // List of product line items
 
             // Quote-level cost parameters

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ProfitOptimiserController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::post('/settings/test-connection', [SettingController::class, 'testConnection'])->name('settings.test-connection');
+    Route::get('/profit-optimiser', [ProfitOptimiserController::class, 'index'])->name('profit-optimiser.index');
 
 });
 

@@ -12,7 +12,8 @@ class Quote extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
+        'customer_name',
+        'customer_address',
         'products',
         'labor_hours',
         'labor_cost_per_hour',

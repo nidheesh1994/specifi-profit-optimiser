@@ -21,7 +21,7 @@ import { Head, Link } from '@inertiajs/vue3';
                 <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
                     <h3 class="text-lg font-semibold mb-2">Profit Optimiser</h3>
                     <p class="text-sm text-gray-600 mb-4">Analyse quotes and get AI suggestions.</p>
-                    <Link :href="'#'" class="text-indigo-600 hover:underline text-sm">Go to tool →</Link>
+                    <Link :href="route('profit-optimiser.index')" class="text-indigo-600 hover:underline text-sm">Go to tool →</Link>
                 </div>
 
                 <!-- Quote History -->
