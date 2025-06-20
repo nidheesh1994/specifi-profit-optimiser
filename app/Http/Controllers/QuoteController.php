@@ -8,14 +8,15 @@ use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class QuoteController extends Controller
 {
     public function index()
     {
-        $quotes = Quote::latest()->get();
+        $quotes = Quote::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
-        return Inertia::render('Quotes/Index', [
+        return Inertia::render('Quote/Index', [
             'quotes' => $quotes,
         ]);
     }
@@ -95,5 +96,61 @@ class QuoteController extends Controller
             'quote' => $quote,
             'products' => $products,
         ]);
+    }
+
+    public function generateSuggestion(Quote $quote)
+    {
+        $settings = Setting::where('user_id', Auth::id())->firstOrFail();
+
+        $productIds = $quote->products ?? [];
+        $products = Product::whereIn('id', $productIds)->get();
+
+        $input = [
+            'customer' => $quote->customer_name,
+            'address' => $quote->customer_address,
+            'products' => $products->map(fn($p) => [
+                'name' => $p->name,
+                'sku' => $p->sku,
+                'cost' => $p->trade_price,
+                'sell' => $p->retail_price,
+            ]),
+            'labor_hours' => $quote->labor_hours,
+            'labor_cost' => $quote->labor_cost_per_hour,
+            'fixed_overheads' => $quote->fixed_overheads,
+            'target_profit_margin' => $quote->target_profit_margin,
+            'calculated_margin' => $quote->calculated_margin,
+            'health_status' => $quote->health_status,
+        ];
+
+        $prompt = "Given the quote data below, provide:\n
+                    - Adjustments to meet target margins\n
+                    - Labor or resource allocation improvements\n
+                    - Suggested product swaps if needed\n
+                    - A client-friendly profitability summary\n
+                Quote Data:\n" . json_encode($input, JSON_PRETTY_PRINT);
+
+        try {
+            $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $settings->api_key,
+            ])->post('https://api.openai.com/v1/chat/completions', [
+                'model' => "gpt-4.1",
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are a helpful business analyst. You starts with "Here’s an analysis and recommendations based on your quote data:"'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+                'max_tokens' => 500
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('quotes.show', $quote->id)->withErrors(['error' => 'Failed to generate AI suggestions: ' . $e->getMessage()]);
+        }
+
+
+        $aiText = $response['choices'][0]['message']['content'] ?? 'AI response unavailable.';
+        $quote->ai_suggestions = $aiText;
+        $quote->ai_model_used = $settings->llm_model;
+        $quote->last_ai_feedback = now();
+        $quote->save();
+
+        return redirect()->route('quotes.show', $quote->id);
     }
 }

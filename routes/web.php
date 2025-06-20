@@ -32,9 +32,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::post('/settings/test-connection', [SettingController::class, 'testConnection'])->name('settings.test-connection');
+    Route::get('/quotes', [QuoteController::class, 'index'])->name('quotes.index');
     Route::get('/quotes/create', [QuoteController::class, 'create'])->name('quotes.create');
     Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
     Route::get('/quotes/{quote}', [QuoteController::class, 'show'])->name('quotes.show');
+    Route::post('/quotes/{quote}/generate-suggestion', [QuoteController::class, 'generateSuggestion'])->name('quotes.generateSuggestion');
+
+
 
 
 });

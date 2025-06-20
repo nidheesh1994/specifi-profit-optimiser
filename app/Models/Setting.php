@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
     protected $fillable = [
+        'user_id',
         'labor_hours',
         'labor_cost_per_hour',
         'fixed_overheads',
@@ -15,4 +17,9 @@ class Setting extends Model
         'api_key',
         'model_name',
     ];
+
+    public static function getForUser()
+    {
+        return static::where('user_id', Auth::id());
+    }
 }

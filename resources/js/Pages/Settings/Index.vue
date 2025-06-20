@@ -22,7 +22,7 @@ const form = useForm({
 
 const availableModels = computed(() => {
     if (form.llm_provider === 'openai') {
-        return ['GPT-4o', 'o4-mini', 'GPT-4.1', 'GPT-4.1-mini'];
+        return ['gpt-4o', 'o4-mini', 'gpt-4.1'];
     }
     return [];
 });

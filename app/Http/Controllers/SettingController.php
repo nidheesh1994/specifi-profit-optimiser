@@ -11,7 +11,7 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::firstOrCreate([]);
+        $settings = Setting::getForUser()->first();
         return Inertia::render('Settings/Index', ['settings' => $settings]);
     }
 
@@ -27,7 +27,12 @@ class SettingController extends Controller
             'model_name' => 'nullable|string',
         ]);
 
-        Setting::first()->update($validated);
+        $validated['user_id'] = auth()->id();
+
+        Setting::updateOrCreate(
+            ['user_id' => auth()->id()], // 🔍 Find by user_id
+            $validated // ✅ Update with validated data
+        );
 
         return redirect()->back()->with('success', 'Settings updated.');
     }

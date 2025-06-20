@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     quote: Object,
@@ -17,9 +17,26 @@ const productMargins = computed(() =>
         return { ...product, cost, sell, margin };
     })
 );
+
+
+const loadingSuggestion = ref(false);
+
+const generateAISuggestion = () => {
+    loadingSuggestion.value = true;
+    router.post(
+        route('quotes.generateSuggestion', props.quote.id),
+        {},
+        {
+            preserveScroll: true,
+            onFinish: () => loadingSuggestion.value = false
+        }
+    );
+};
+
 </script>
 
 <template>
+
     <Head title="Quote Summary" />
     <AuthenticatedLayout>
         <template #header>
@@ -44,15 +61,10 @@ const productMargins = computed(() =>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="product in productMargins"
-                            :key="product.id"
-                            :class="{
-                                'bg-red-100': product.margin < 10,
-                                'bg-yellow-100': product.margin >= 10 && product.margin < 20
-                            }"
-                            class="border-b"
-                        >
+                        <tr v-for="product in productMargins" :key="product.id" :class="{
+                            'bg-red-100': product.margin < 10,
+                            'bg-yellow-100': product.margin >= 10 && product.margin < 20
+                        }" class="border-b">
                             <td class="px-4 py-2">{{ product.name }}</td>
                             <td class="px-4 py-2">{{ product.sku }}</td>
                             <td class="px-4 py-2">£{{ product.cost.toFixed(2) }}</td>
@@ -72,15 +84,21 @@ const productMargins = computed(() =>
 
                 <div class="mb-6">
                     <strong>Health Status:</strong>
-                    <span
-                        :class="{
-                            'text-green-600': quote.health_status === 'green',
-                            'text-yellow-600': quote.health_status === 'amber',
-                            'text-red-600': quote.health_status === 'red'
-                        }"
-                    >
+                    <span :class="{
+                        'text-green-600': quote.health_status === 'green',
+                        'text-yellow-600': quote.health_status === 'amber',
+                        'text-red-600': quote.health_status === 'red'
+                    }">
                         {{ quote.health_status.toUpperCase() }}
                     </span>
+                </div>
+
+                <div class="mb-6">
+                    <button @click="generateAISuggestion"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                        :disabled="loadingSuggestion">
+                        {{ loadingSuggestion ? 'Generating Suggestion...' : 'Generate AI Suggestion' }}
+                    </button>
                 </div>
 
                 <div v-if="quote.ai_suggestions" class="mb-6">
