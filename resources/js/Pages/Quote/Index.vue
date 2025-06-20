@@ -8,14 +8,14 @@ const props = defineProps({
 </script>
 
 <template>
+
     <Head title="Quotes" />
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800">Quotes</h2>
-                <Link href="/quotes/create"
-                      class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                    Create New Quote
+                <Link href="/quotes/create" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Create New Quote
                 </Link>
             </div>
         </template>
@@ -37,10 +37,16 @@ const props = defineProps({
                             <td class="px-4 py-2">{{ quote.customer_name }}</td>
                             <td class="px-4 py-2">{{ new Date(quote.created_at).toLocaleDateString() }}</td>
                             <td class="px-4 py-2">{{ quote.calculated_margin }}%</td>
-                            <td class="px-4 py-2 capitalize">{{ quote.health_status }}</td>
+                            <td class="px-4 py-2 capitalize">
+                                <div class="w-6 h-6 rounded ml-4" :class="{
+                                    'bg-green-500': quote.health_status === 'green',
+                                    'bg-yellow-400': quote.health_status === 'amber',
+                                    'bg-red-500': quote.health_status === 'red'
+                                }" title="Health Status"></div>
+                            </td>
                             <td class="px-4 py-2">
                                 <Link :href="route('quotes.show', quote.id)" class="text-indigo-600 hover:underline">
-                                    View
+                                View
                                 </Link>
                             </td>
                         </tr>
@@ -53,18 +59,12 @@ const props = defineProps({
                         Showing {{ quotes.from }} to {{ quotes.to }} of {{ quotes.total }} results
                     </div>
                     <div class="space-x-2">
-                        <button
-                            :disabled="!quotes.prev_page_url"
-                            @click="router.visit(quotes.prev_page_url)"
-                            class="px-3 py-1 border rounded hover:bg-gray-100"
-                        >
+                        <button :disabled="!quotes.prev_page_url" @click="router.visit(quotes.prev_page_url)"
+                            class="px-3 py-1 border rounded hover:bg-gray-100">
                             Prev
                         </button>
-                        <button
-                            :disabled="!quotes.next_page_url"
-                            @click="router.visit(quotes.next_page_url)"
-                            class="px-3 py-1 border rounded hover:bg-gray-100"
-                        >
+                        <button :disabled="!quotes.next_page_url" @click="router.visit(quotes.next_page_url)"
+                            class="px-3 py-1 border rounded hover:bg-gray-100">
                             Next
                         </button>
                     </div>

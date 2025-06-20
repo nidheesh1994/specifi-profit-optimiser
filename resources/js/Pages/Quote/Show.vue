@@ -60,6 +60,7 @@ const generateAISuggestion = () => {
                             <th class="px-4 py-2">SKU</th>
                             <th class="px-4 py-2">Cost</th>
                             <th class="px-4 py-2">Sell</th>
+                            <th class="px-4 py-2">Margin</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,11 +72,12 @@ const generateAISuggestion = () => {
                             <td class="px-4 py-2">{{ product.sku }}</td>
                             <td class="px-4 py-2">£{{ product.cost.toFixed(2) }}</td>
                             <td class="px-4 py-2">£{{ product.sell.toFixed(2) }}</td>
+                            <td class="px-4 py-2">{{ product.margin.toFixed(2) }}%</td>
                         </tr>
                     </tbody>
                 </table>
 
-                <div class="mb-6 space-y-1">
+                <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2">
                     <p><strong>Estimated Labor Hours:</strong> {{ quote.labor_hours }}</p>
                     <p><strong>Labor Cost Per Hour:</strong> £{{ quote.labor_cost_per_hour }}</p>
                     <p><strong>Fixed Overheads:</strong> £{{ quote.fixed_overheads }}</p>
@@ -83,6 +85,7 @@ const generateAISuggestion = () => {
                     <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
                     <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
                 </div>
+
 
                 <div class="mb-6 flex">
                     <strong>Health Status:</strong>
