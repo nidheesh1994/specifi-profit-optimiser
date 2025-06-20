@@ -19,9 +19,9 @@ import { Head, Link } from '@inertiajs/vue3';
 
                 <!-- Profit Optimiser -->
                 <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
-                    <h3 class="text-lg font-semibold mb-2">Profit Optimiser</h3>
-                    <p class="text-sm text-gray-600 mb-4">Analyse quotes and get AI suggestions.</p>
-                    <Link :href="route('profit-optimiser.index')" class="text-indigo-600 hover:underline text-sm">Go to tool →</Link>
+                    <h3 class="text-lg font-semibold mb-2">Create Quotes</h3>
+                    <p class="text-sm text-gray-600 mb-4">Create quotes and get AI suggestions.</p>
+                    <Link :href="route('quotes.create')" class="text-indigo-600 hover:underline text-sm">Go to tool →</Link>
                 </div>
 
                 <!-- Quote History -->

@@ -45,6 +45,8 @@ const showNotification = (message, type = 'error') => {
 };
 
 const form = ref({
+    customer_name: '',
+    customer_address: '',
     labor_hours: '',
     labor_cost_per_hour: '',
     fixed_overheads: '',
@@ -61,6 +63,11 @@ const loadDefaults = () => {
 const createQuote = () => {
     if (selectedProductIds.value.length === 0) {
         showNotification('Please select at least one product.');
+        return;
+    }
+
+    if (!form.value.customer_name) {
+        showNotification('Customer name is required');
         return;
     }
 
@@ -86,7 +93,7 @@ const createQuote = () => {
     <Head title="Profit Optimiser" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Profit Optimiser</h2>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">Create Qoutes</h2>
         </template>
 
         <div class="py-12">
@@ -128,6 +135,14 @@ const createQuote = () => {
 
                 <!-- Quote Fields -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block font-medium mb-1">Customer Name</label>
+                        <input type="text" v-model="form.customer_name" class="w-full border px-3 py-2 rounded" />
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">Customer Address</label>
+                        <input type="text" v-model="form.customer_address" class="w-full border px-3 py-2 rounded" />
+                    </div>
                     <div>
                         <label class="block font-medium mb-1">Estimated Labor Hours</label>
                         <input type="number" v-model="form.labor_hours" class="w-full border px-3 py-2 rounded" />

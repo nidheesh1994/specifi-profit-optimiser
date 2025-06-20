@@ -6,14 +6,14 @@ use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
-class ProfitOptimiserController extends Controller
+class QuoteController extends Controller
 {
-    public function index()
+    public function create()
     {
         $products = Product::all();
         $settings = Setting::first();
 
-        return inertia('ProfitOptimiser/Index', [
+        return inertia('Quote/Create', [
             'products' => $products,
             'settings' => $settings,
         ]);
