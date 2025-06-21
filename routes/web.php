@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/quotes/create', [QuoteController::class, 'create'])->name('quotes.create');
     Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
     Route::get('/quotes/{quote}', [QuoteController::class, 'show'])->name('quotes.show');
+    Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
     Route::post('/quotes/{quote}/generate-suggestion', [QuoteController::class, 'generateSuggestion'])->name('quotes.generateSuggestion');
     Route::post('/quotes/{quote}/update-products', [QuoteController::class, 'updateProducts'])->name('quotes.updateProducts');
     Route::post('/quotes/{quote}/update-details', [QuoteController::class, 'updateDetails'])->name('quotes.updateDetails');

@@ -32,6 +32,13 @@ class QuoteController extends Controller
         ]);
     }
 
+    public function destroy(Quote $quote)
+    {
+        $quote->delete();
+
+        return redirect()->route('quotes.index');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

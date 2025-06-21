@@ -5,6 +5,12 @@ import { Head, Link, router } from '@inertiajs/vue3';
 const props = defineProps({
     quotes: Object
 });
+
+const deleteQuote = (id) => {
+    if (confirm('Are you sure you want to delete this quote?')) {
+        router.delete(route('quotes.destroy', id));
+    }
+};
 </script>
 
 <template>
@@ -47,7 +53,10 @@ const props = defineProps({
                             <td class="px-4 py-2">
                                 <Link :href="route('quotes.show', quote.id)" class="text-indigo-600 hover:underline">
                                 View
-                                </Link>
+                                </Link>&nbsp;|&nbsp;
+                                <button @click="deleteQuote(quote.id)" class="text-red-600 hover:underline">
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     </tbody>
