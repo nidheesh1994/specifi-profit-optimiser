@@ -73,11 +73,29 @@ const needsNewSuggestion = computed(() => {
 
     const lastFeedback = new Date(props.quote.last_ai_feedback).getTime();
     const lastUpdated = new Date(props.quote.updated_at).getTime();
-
-    console.log(lastFeedback, lastUpdated, props.quote.last_ai_feedback, props.quote.updated_at, lastFeedback < lastUpdated);
-
     return lastFeedback < lastUpdated;
 });
+
+const showConstraintModal = ref(false);
+const constraintsForm = ref({
+    labor_hours: props.quote.labor_hours,
+    labor_cost_per_hour: props.quote.labor_cost_per_hour,
+    fixed_overheads: props.quote.fixed_overheads,
+    target_profit_margin: props.quote.target_profit_margin,
+});
+
+const openEditConstraintsModal = () => {
+    showConstraintModal.value = true;
+};
+
+const saveConstraints = () => {
+    router.post(route('quotes.updateDetails', props.quote.id), constraintsForm.value, {
+        preserveScroll: true,
+        onSuccess: () => {
+            showConstraintModal.value = false;
+        },
+    });
+};
 
 
 </script>
@@ -159,7 +177,7 @@ const needsNewSuggestion = computed(() => {
                     <button @click="generateAISuggestion"
                         class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
                         :disabled="loadingSuggestion">
-                        {{ loadingSuggestion ? 'Generating Suggestion...' : (needsNewSuggestion ? 'Generate New AI Suggestion' : 'Generate AI Suggestion') }}
+                        {{ loadingSuggestion ? "Generating Suggestion..." : (needsNewSuggestion ? "Generate New AI Suggestion" : "Generate AI Suggestion") }}
                     </button>
 
                 </div>
@@ -222,5 +240,48 @@ const needsNewSuggestion = computed(() => {
                 </div>
             </div>
         </div>
+
+        <!-- Constraint Modal -->
+        <div v-if="showConstraintModal"
+            class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg max-w-lg w-full">
+                <h3 class="text-lg font-semibold mb-4">Edit Quote Constraints</h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Labor Hours</label>
+                        <input type="number" v-model="constraintsForm.labor_hours"
+                            class="w-full border px-3 py-2 rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Labor Cost Per Hour</label>
+                        <input type="number" v-model="constraintsForm.labor_cost_per_hour"
+                            class="w-full border px-3 py-2 rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fixed Overheads</label>
+                        <input type="number" v-model="constraintsForm.fixed_overheads"
+                            class="w-full border px-3 py-2 rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Target Profit Margin</label>
+                        <input type="number" v-model="constraintsForm.target_profit_margin"
+                            class="w-full border px-3 py-2 rounded" />
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-2">
+                    <button @click="showConstraintModal = false"
+                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button @click="saveConstraints"
+                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </AuthenticatedLayout>
 </template>

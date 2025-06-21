@@ -61,10 +61,10 @@ class QuoteController extends Controller
         // Health status based on margin
         $target_margin = $validated['target_profit_margin'] ?? 20;
         $health_status = 'green';
-        if ($calculated_margin < $target_margin) {
-            $health_status = 'amber';
-        } elseif ($calculated_margin < $target_margin * 0.5) {
+        if ($calculated_margin < $target_margin * 0.5) {
             $health_status = 'red';
+        } elseif ($calculated_margin < $target_margin) {
+            $health_status = 'amber';
         }
 
         $quote = Quote::create([
@@ -105,10 +105,10 @@ class QuoteController extends Controller
 
         $target_margin = $quote->target_profit_margin ?? 20;
         $health_status = 'green';
-        if ($calculated_margin < $target_margin) {
-            $health_status = 'amber';
-        } elseif ($calculated_margin < $target_margin * 0.5) {
+        if ($calculated_margin < $target_margin * 0.5) {
             $health_status = 'red';
+        } elseif ($calculated_margin < $target_margin) {
+            $health_status = 'amber';
         }
 
         $quote->update([
@@ -147,10 +147,10 @@ class QuoteController extends Controller
         // Health status based on margin
         $target_margin = $validated['target_profit_margin'] ?? 20;
         $health_status = 'green';
-        if ($calculated_margin < $target_margin) {
-            $health_status = 'amber';
-        } elseif ($calculated_margin < $target_margin * 0.5) {
+        if ($calculated_margin < $target_margin * 0.5) {
             $health_status = 'red';
+        } elseif ($calculated_margin < $target_margin) {
+            $health_status = 'amber';
         }
 
         $quote->update([
