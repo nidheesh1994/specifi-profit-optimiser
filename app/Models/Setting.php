@@ -16,6 +16,7 @@ class Setting extends Model
         'llm_provider',
         'api_key',
         'model_name',
+        'connection_status'
     ];
 
     public static function getForUser()

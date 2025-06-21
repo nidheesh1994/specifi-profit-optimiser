@@ -25,6 +25,7 @@ class SettingController extends Controller
             'llm_provider' => 'required|string',
             'api_key' => 'nullable|string',
             'model_name' => 'nullable|string',
+            'connection_status' => 'nullable|string',
         ]);
 
         $validated['user_id'] = auth()->id();

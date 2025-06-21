@@ -8,7 +8,7 @@ const props = defineProps({
     settings: Object,
 });
 
-const connectionStatus = ref(null); // null, 'success', 'error'
+const connectionStatus = ref(props.settings?.connection_status || null); // null, 'success', 'error'
 
 const form = useForm({
     labor_hours: props.settings?.labor_hours,
@@ -18,6 +18,7 @@ const form = useForm({
     llm_provider: props.settings?.llm_provider,
     api_key: props.settings?.api_key,
     model_name: props.settings?.model_name,
+    connection_status: props.settings?.connection_status,
 });
 
 const availableModels = computed(() => {
@@ -39,9 +40,8 @@ const checkConnection = async () => {
             model_name: form.model_name,
         });
 
-        console.log(response.data);
-
         connectionStatus.value = response.data.status ?? 'error';
+        form.connection_status = connectionStatus.value;
     } catch {
         connectionStatus.value = 'error';
     }
