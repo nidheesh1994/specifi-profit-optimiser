@@ -11,13 +11,13 @@ const props = defineProps({
 const connectionStatus = ref(null); // null, 'success', 'error'
 
 const form = useForm({
-    labor_hours: props.settings.labor_hours,
-    labor_cost_per_hour: props.settings.labor_cost_per_hour,
-    fixed_overheads: props.settings.fixed_overheads,
-    target_profit_margin: props.settings.target_profit_margin,
-    llm_provider: props.settings.llm_provider,
-    api_key: props.settings.api_key,
-    model_name: props.settings.model_name,
+    labor_hours: props.settings?.labor_hours,
+    labor_cost_per_hour: props.settings?.labor_cost_per_hour,
+    fixed_overheads: props.settings?.fixed_overheads,
+    target_profit_margin: props.settings?.target_profit_margin,
+    llm_provider: props.settings?.llm_provider,
+    api_key: props.settings?.api_key,
+    model_name: props.settings?.model_name,
 });
 
 const availableModels = computed(() => {

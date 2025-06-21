@@ -30,7 +30,7 @@ return new class extends Migration {
             // AI Chat Support
             $table->longText('chat_log')->nullable(); // Chat history in JSON
             $table->string('ai_model_used')->nullable(); // e.g., "gpt-4"
-            $table->text('last_ai_feedback')->nullable(); // Last summary from AI
+            $table->timestamp('last_ai_feedback')->nullable(); // Last summary from AI
             $table->timestamp('chat_started_at')->nullable();
             $table->timestamps();
         });

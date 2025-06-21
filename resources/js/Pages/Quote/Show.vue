@@ -18,7 +18,7 @@ const filteredProducts = computed(() => {
     if (!searchQuery.value) return props.allProducts;
 
     const query = searchQuery.value.toLowerCase();
-    return props.products.filter(product =>
+    return props.allProducts.filter(product =>
         product.name?.toLowerCase().includes(query) ||
         product.sku?.toLowerCase().includes(query) ||
         product.mpn?.toLowerCase().includes(query)
@@ -67,6 +67,18 @@ const generateAISuggestion = () => {
         }
     );
 };
+
+const needsNewSuggestion = computed(() => {
+    if (!props.quote.last_ai_feedback) return true;
+
+    const lastFeedback = new Date(props.quote.last_ai_feedback).getTime();
+    const lastUpdated = new Date(props.quote.updated_at).getTime();
+
+    console.log(lastFeedback, lastUpdated, props.quote.last_ai_feedback, props.quote.updated_at, lastFeedback < lastUpdated);
+
+    return lastFeedback < lastUpdated;
+});
+
 
 </script>
 
@@ -147,8 +159,9 @@ const generateAISuggestion = () => {
                     <button @click="generateAISuggestion"
                         class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
                         :disabled="loadingSuggestion">
-                        {{ loadingSuggestion ? 'Generating...' : 'Generate AI Suggestion' }}
+                        {{ loadingSuggestion ? 'Generating Suggestion...' : (needsNewSuggestion ? 'Generate New AI Suggestion' : 'Generate AI Suggestion') }}
                     </button>
+
                 </div>
 
                 <div v-if="quote.ai_suggestions" class="mb-6">

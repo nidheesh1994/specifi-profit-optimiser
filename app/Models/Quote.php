@@ -39,6 +39,7 @@ class Quote extends Model
         'calculated_margin' => 'decimal:2',
         'total_profit' => 'decimal:2',
         'chat_started_at' => 'datetime',
+        'last_ai_feedback' => 'datetime',
     ];
 
     public function user(): BelongsTo
