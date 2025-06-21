@@ -61,10 +61,10 @@ class QuoteController extends Controller
         // Health status based on margin
         $target_margin = $validated['target_profit_margin'] ?? 20;
         $health_status = 'green';
-        if ($calculated_margin < $target_margin * 0.5) {
-            $health_status = 'red';
-        } elseif ($calculated_margin < $target_margin * 0.9) {
+        if ($calculated_margin < $target_margin) {
             $health_status = 'amber';
+        } elseif ($calculated_margin < $target_margin * 0.5) {
+            $health_status = 'red';
         }
 
         $quote = Quote::create([
@@ -84,6 +84,90 @@ class QuoteController extends Controller
         return redirect()->route('quotes.show', $quote->id);
     }
 
+    public function updateProducts(Request $request, Quote $quote)
+    {
+        $validated = $request->validate([
+            'products' => 'required|array|min:1',
+            'products.*' => 'exists:products,id',
+        ]);
+
+        $products = Product::whereIn('id', $validated['products'])->get();
+
+        $total_cost = $products->sum('trade_price');
+        $total_sell = $products->sum('retail_price');
+        $gross_profit = $total_sell - $total_cost;
+
+        $labor_cost = $quote->labor_hours * $quote->labor_cost_per_hour;
+        $fixed_overheads = $quote->fixed_overheads ?? 0;
+
+        $net_profit = $gross_profit - $labor_cost - $fixed_overheads;
+        $calculated_margin = $total_sell > 0 ? round(($net_profit / $total_sell) * 100, 2) : 0;
+
+        $target_margin = $quote->target_profit_margin ?? 20;
+        $health_status = 'green';
+        if ($calculated_margin < $target_margin) {
+            $health_status = 'amber';
+        } elseif ($calculated_margin < $target_margin * 0.5) {
+            $health_status = 'red';
+        }
+
+        $quote->update([
+            'products' => $validated['products'],
+            'calculated_margin' => $calculated_margin,
+            'total_profit' => $net_profit,
+            'health_status' => $health_status,
+        ]);
+
+        return back()->with('success', 'Products updated successfully.');
+    }
+
+
+    public function updateDetails(Request $request, Quote $quote)
+    {
+        $validated = $request->validate([
+            'labor_hours' => 'required|numeric|min:0.01',
+            'labor_cost_per_hour' => 'required|numeric|min:0.01',
+            'fixed_overheads' => 'nullable|numeric|min:0',
+            'target_profit_margin' => 'nullable|numeric|min:0',
+        ]);
+
+        // Fetch the products tied to the quote
+        $products = Product::whereIn('id', $quote->products ?? [])->get();
+
+        $total_cost = $products->sum('trade_price');
+        $total_sell = $products->sum('retail_price');
+        $gross_profit = $total_sell - $total_cost;
+
+        $labor_cost = $validated['labor_hours'] * $validated['labor_cost_per_hour'];
+        $fixed_overheads = $validated['fixed_overheads'] ?? 0;
+
+        $net_profit = $gross_profit - $labor_cost - $fixed_overheads;
+        $calculated_margin = $total_sell > 0 ? round(($net_profit / $total_sell) * 100, 2) : 0;
+
+        // Health status based on margin
+        $target_margin = $validated['target_profit_margin'] ?? 20;
+        $health_status = 'green';
+        if ($calculated_margin < $target_margin) {
+            $health_status = 'amber';
+        } elseif ($calculated_margin < $target_margin * 0.5) {
+            $health_status = 'red';
+        }
+
+        $quote->update([
+            'labor_hours' => $validated['labor_hours'],
+            'labor_cost_per_hour' => $validated['labor_cost_per_hour'],
+            'fixed_overheads' => $fixed_overheads,
+            'target_profit_margin' => $validated['target_profit_margin'],
+            'calculated_margin' => $calculated_margin,
+            'total_profit' => $net_profit,
+            'health_status' => $health_status,
+        ]);
+
+        return back()->with('success', 'Quote details updated.');
+    }
+
+
+
     public function show(Quote $quote)
     {
         // Decode the stored product IDs
@@ -91,10 +175,11 @@ class QuoteController extends Controller
 
         // Fetch the product details
         $products = Product::whereIn('id', $productIds)->get();
-
+        $allProducts = Product::all();
         return Inertia::render('Quote/Show', [
             'quote' => $quote,
             'products' => $products,
+            'allProducts' => $allProducts,
         ]);
     }
 
@@ -112,8 +197,8 @@ class QuoteController extends Controller
         $products = Product::whereIn('id', $productIds)->get();
 
         $input = [
-            'customer' => $quote->customer_name,
-            'address' => $quote->customer_address,
+            // 'customer' => $quote->customer_name,
+            // 'address' => $quote->customer_address,
             'products' => $products->map(fn($p) => [
                 'name' => $p->name,
                 'sku' => $p->sku,

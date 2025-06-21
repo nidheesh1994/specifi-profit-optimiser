@@ -37,10 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
     Route::get('/quotes/{quote}', [QuoteController::class, 'show'])->name('quotes.show');
     Route::post('/quotes/{quote}/generate-suggestion', [QuoteController::class, 'generateSuggestion'])->name('quotes.generateSuggestion');
-
-
-
-
+    Route::post('/quotes/{quote}/update-products', [QuoteController::class, 'updateProducts'])->name('quotes.updateProducts');
+    Route::post('/quotes/{quote}/update-details', [QuoteController::class, 'updateDetails'])->name('quotes.updateDetails');
 });
 
 require __DIR__.'/auth.php';

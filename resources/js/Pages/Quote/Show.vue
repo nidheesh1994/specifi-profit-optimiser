@@ -5,8 +5,41 @@ import { computed, ref } from 'vue';
 
 const props = defineProps({
     quote: Object,
-    products: Array, // <-- Add products from controller
+    products: Array,
+    allProducts: Array,
 });
+
+const showProductModal = ref(false);
+const selectedProducts = ref([...props.products]);
+const selectedTemp = ref([]);
+const searchQuery = ref('');
+
+const filteredProducts = computed(() => {
+    if (!searchQuery.value) return props.allProducts;
+
+    const query = searchQuery.value.toLowerCase();
+    return props.products.filter(product =>
+        product.name?.toLowerCase().includes(query) ||
+        product.sku?.toLowerCase().includes(query) ||
+        product.mpn?.toLowerCase().includes(query)
+    );
+});
+
+const updateQuoteProducts = () => {
+    selectedProducts.value = [...selectedTemp.value];
+    const selectedProductIds = selectedTemp.value.map(p => p.id);
+    showProductModal.value = false;
+    router.post(route('quotes.updateProducts', props.quote.id), {
+        products: selectedProductIds
+    });
+};
+
+const openProductModal = () => {
+    selectedTemp.value = [...selectedProducts.value];
+    showProductModal.value = true;
+    searchQuery.value = '';
+};
+
 
 // Calculations per product
 const productMargins = computed(() =>
@@ -52,6 +85,18 @@ const generateAISuggestion = () => {
                     <p><strong>Address:</strong> {{ quote.customer_address }}</p>
                     <p><strong>Date:</strong> {{ new Date(quote.created_at).toLocaleDateString() }}</p>
                 </div>
+
+                <div class="mb-4 flex space-x-4">
+                    <button @click="openProductModal"
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Edit Products
+                    </button>
+                    <button @click="openEditConstraintsModal"
+                        class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+                        Edit Constraints
+                    </button>
+                </div>
+
 
                 <table class="w-full text-left border mb-6">
                     <thead class="bg-gray-100">
@@ -115,6 +160,52 @@ const generateAISuggestion = () => {
                         <h3 class="font-semibold mb-2">AI Suggestions</h3>
                         {{ quote.ai_suggestions }}
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Modal -->
+        <div v-if="showProductModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg max-w-6xl w-full">
+                <h3 class="text-lg font-semibold mb-4">Select Products</h3>
+                <input type="text" v-model="searchQuery" placeholder="Search products..."
+                    class="w-full border px-3 py-2 rounded mb-4" />
+
+                <div class="max-h-80 overflow-y-auto border rounded mb-4">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Select</th>
+                                <th class="px-4 py-2">Name</th>
+                                <th class="px-4 py-2">SKU</th>
+                                <th class="px-4 py-2">MPN</th>
+                                <th class="px-4 py-2">Cost</th>
+                                <th class="px-4 py-2">Sell</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in filteredProducts" :key="product.id" class="border-b">
+                                <td class="px-4 py-2">
+                                    <input type="checkbox" :value="product" v-model="selectedTemp" />
+                                </td>
+                                <td class="px-4 py-2">{{ product.name }}</td>
+                                <td class="px-4 py-2">{{ product.sku }}</td>
+                                <td class="px-4 py-2">{{ product.mpn }}</td>
+                                <td class="px-4 py-2">£{{ product.trade_price }}</td>
+                                <td class="px-4 py-2">£{{ product.retail_price }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <button @click="showProductModal = false" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button @click="updateQuoteProducts"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        Save
+                    </button>
                 </div>
             </div>
         </div>
