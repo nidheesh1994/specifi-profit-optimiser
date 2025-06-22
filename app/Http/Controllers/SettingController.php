@@ -35,7 +35,7 @@ class SettingController extends Controller
             $validated // ✅ Update with validated data
         );
 
-        return redirect()->back()->with('success', 'Settings updated.');
+        return redirect()->route('settings.index')->with('success', 'Settings updated.');
     }
 
     public function testConnection(Request $request)
