@@ -1,8 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import { ref, computed, watchEffect } from 'vue';
-import axios from 'axios';
 
 const props = defineProps({
     settings: Object,
@@ -46,19 +45,29 @@ const checkConnection = async () => {
         connectionStatus.value = 'error';
         return;
     }
-    try {
-        const response = await axios.post(route('settings.test-connection'), {
+    connectionStatus.value = 'checking';
+    router.post(
+        route('settings.test-connection'),
+        {
             provider: form.llm_provider,
-            modal_name: form.model_name,
             api_key: form.api_key,
             model_name: form.model_name,
-        });
-
-        connectionStatus.value = response.data.status ?? 'error';
-        form.connection_status = connectionStatus.value;
-    } catch {
-        connectionStatus.value = 'error';
-    }
+        },
+        {
+            // Prevent full page reload, handle response manually
+            preserveState: true,
+            preserveScroll: true,
+            only: [], // No props to reload
+            onSuccess: (page) => {
+                // Read response JSON from the "page" if you return it as a prop
+                connectionStatus.value = page.props.flash?.connection_status ?? 'error';
+                form.connection_status = connectionStatus.value;
+            },
+            onError: () => {
+                connectionStatus.value = 'error';
+            }
+        }
+    );
 };
 
 
@@ -123,8 +132,8 @@ const checkConnection = async () => {
                                 <select v-model="form.llm_provider" class="w-full border px-3 py-2 rounded">
                                     <option value="">Select Provider</option>
                                     <option value="openai">OpenAI</option>
-                                    <option value="huggingface">Hugging Face</option>
-                                    <option value="selfhosted">Self Hosted</option>
+                                    <option value="huggingface" disabled>Hugging Face</option>
+                                    <option value="selfhosted" disabled>Self Hosted</option>
                                 </select>
                             </div>
                             <div v-if="form.llm_provider === 'openai'">

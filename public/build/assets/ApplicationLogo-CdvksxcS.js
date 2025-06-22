@@ -1,0 +1,1 @@
+import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{f as c,o as e}from"./app-a7LgLMx-.js";const t={},s={src:"/images/logo.png",alt:"Specifi Logo",class:"w-16 h-auto"};function r(n,a){return e(),c("img",s)}const p=o(t,[["render",r]]);export{p as A};

@@ -53,16 +53,15 @@ class SettingController extends Controller
                     ]
                 ]);
 
-                if ($response->successful()) {
-                    return response()->json(['status' => 'success']);
-                }
+                $status = $response->successful() ? 'success' : 'error';
+                // dd($status);
             }
 
             // Add handling for Hugging Face / self-hosted here...
 
-            return response()->json(['status' => 'fail'], 422);
+            return redirect()->back()->with('connection_status', $status);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return redirect()->back()->with('connection_status', 'error');
         }
     }
 
