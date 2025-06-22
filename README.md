@@ -54,6 +54,13 @@ This project is a working prototype of the Specifi Profit Optimiser. The tool he
 
     Go to [http://localhost:8000](http://localhost:8000) in your browser.
 
+4. **Login info**
+
+    ```bash
+    username: admin@specifi.test
+    password: password123
+    ```
+
 ---
 
 ## Functionality
