@@ -14,6 +14,7 @@ const showAddModal = ref(false);
 // create Form setup
 const form = useForm({
     name: '',
+    category: '',
     quantity: '',
     trade_price: '',
     retail_price: '',
@@ -34,6 +35,7 @@ const openAddModal = () => {
 const closeAddModal = () => {
     showAddModal.value = false;
     form.name = '';
+    form.category = '';
     form.quantity = '';
     form.trade_price = '';
     form.retail_price = '';
@@ -64,6 +66,7 @@ const editProduct = (id) => {
     const product = props.products.find(p => p.id === id);
     if (product) {
         form.name = product.name;
+        form.category = product.category;
         form.quantity = product.quantity;
         form.trade_price = product.trade_price;
         form.retail_price = product.retail_price;
@@ -110,6 +113,7 @@ const deleteProduct = (id) => {
                             <tr>
                                 <th class="px-4 py-2">#</th>
                                 <th class="px-4 py-2">Name</th>
+                                <th class="px-4 py-2">Category</th>
                                 <th class="px-4 py-2">Quantity</th>
                                 <th class="px-4 py-2">Cost</th>
                                 <th class="px-4 py-2">Sell</th>
@@ -120,6 +124,7 @@ const deleteProduct = (id) => {
                             <tr v-for="(product, index) in products" :key="product.id" class="border-b">
                                 <td class="px-4 py-2">{{ index + 1 }}</td>
                                 <td class="px-4 py-2">{{ product.name }}</td>
+                                <td class="px-4 py-2">{{ product.category }}</td>
                                 <td class="px-4 py-2">{{ product.quantity }}</td>
                                 <td class="px-4 py-2">£{{ product.trade_price }}</td>
                                 <td class="px-4 py-2">£{{ product.retail_price }}</td>
@@ -150,6 +155,12 @@ const deleteProduct = (id) => {
                                 <div class="mb-4">
                                     <label class="block mb-1 font-medium">Name</label>
                                     <input type="text" v-model="form.name" class="w-full border px-3 py-2 rounded"
+                                        required />
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block mb-1 font-medium">Category</label>
+                                    <input type="text" v-model="form.category" class="w-full border px-3 py-2 rounded"
                                         required />
                                 </div>
 

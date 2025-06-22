@@ -21,6 +21,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
             'quantity' => 'required|integer|min:0',
             'trade_price' => 'required|numeric',
             'retail_price' => 'required|numeric',
@@ -28,7 +29,7 @@ class ProductController extends Controller
             'sku' => 'nullable|string|max:255'
         ]);
 
-        Product::create($request->only('name', 'quantity', 'trade_price', 'retail_price', 'mpn', 'sku'));
+        Product::create($request->only('name', 'category', 'quantity', 'trade_price', 'retail_price', 'mpn', 'sku'));
 
         return redirect()->route('products.index');
     }
@@ -44,6 +45,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
             'quantity' => 'required|integer',
             'trade_price' => 'required|numeric',
             'retail_price' => 'required|numeric',
@@ -53,6 +55,7 @@ class ProductController extends Controller
 
         $product->update($request->only([
             'name',
+            'category',
             'quantity',
             'trade_price',
             'retail_price',
