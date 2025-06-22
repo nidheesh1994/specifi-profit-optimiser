@@ -23,7 +23,7 @@ This project is a working prototype of the Specifi Profit Optimiser, designed as
 1. **Clone the repository**
 
     ```bash
-    git clone https://github.com/yourusername/specifi-profit-optimiser.git
+    git clone git@github.com:nidheesh1994/specifi-profit-optimiser.git
     cd specifi-profit-optimiser
     ```
 
@@ -58,6 +58,7 @@ This project is a working prototype of the Specifi Profit Optimiser, designed as
 
 ## Functionality
 
+- **Settings:** Save your OpenAI key, select model, and check API connection status.
 - **Input Form:** Enter products/services (cost, sell price, quantity), labor hours, labor cost/hour, overheads, and target margin.
 - **Quote Calculations:**
     - Calculates line item margins, total gross profit, net profit after labor & overheads, overall margin.
@@ -66,7 +67,6 @@ This project is a working prototype of the Specifi Profit Optimiser, designed as
 - **AI Suggestions:** Calls OpenAI API (gpt-4) to provide improvements on margin, labor, product swaps, and a client-friendly summary. (Other LLM providers are disabled in this version.)
 - **Quote Editing:** Edit products, constraints, and customer details via modals.
 - **Export to PDF:** Preview and export the quote (with all calculations and AI feedback) as a nicely formatted PDF.
-- **Settings:** Save your OpenAI key, select model, and check API connection status.
 
 ---
 
@@ -82,7 +82,7 @@ This project is a working prototype of the Specifi Profit Optimiser, designed as
 - **Health Status:** Based on calculated margin (configurable thresholds, e.g., <10% red, <20% amber, else green).
 - **AI Integration:** Only OpenAI is enabled; API key is required per user. Hugging Face/self-hosted can be enabled in future versions.
 - **UX:** Modals are used for a clean, single-page experience; progress bar appears on AI or connection actions.
-- **Export:** Entire quote preview (not just visible area) is exported as PDF, including AI feedback.
+- **Export:** The Entire quote preview is exported as a PDF, including AI feedback. AI feedback can be hidden if needed
 
 ---
 
