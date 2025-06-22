@@ -107,9 +107,6 @@ This project is a working prototype of the Specifi Profit Optimiser. The tool he
 
 - Only OpenAI is currently supported for AI suggestions.
 - Hugging Face/self-hosted LLMs are planned but disabled.
-- No persistent "Quote History" or user authentication (demo scope).
-- Frontend validation is minimal; security is for demo use only.
-- Product list is seeded for simulation; in real apps, connect to live data.
 
 ---
 
