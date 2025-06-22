@@ -181,6 +181,7 @@ const exportPDF = async () => {
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-4 py-2">Name</th>
+                            <th class="px-4 py-2">Category</th>
                             <th class="px-4 py-2">SKU</th>
                             <th class="px-4 py-2">Cost</th>
                             <th class="px-4 py-2">Sell</th>
@@ -193,6 +194,7 @@ const exportPDF = async () => {
                             'bg-yellow-100': product.margin >= 10 && product.margin < 20
                         }" class="border-b">
                             <td class="px-4 py-2">{{ product.name }}</td>
+                            <td class="px-4 py-2">{{ product.category }}</td>
                             <td class="px-4 py-2">{{ product.sku }}</td>
                             <td class="px-4 py-2">£{{ product.cost.toFixed(2) }}</td>
                             <td class="px-4 py-2">£{{ product.sell.toFixed(2) }}</td>
@@ -212,7 +214,7 @@ const exportPDF = async () => {
 
 
                 <div class="mb-6 flex">
-                    <strong>Health Status:</strong>
+                    <strong>Status:</strong>
                     <div class="w-6 h-6 rounded ml-4" :class="{
                         'bg-green-500': quote.health_status === 'green',
                         'bg-yellow-400': quote.health_status === 'amber',
@@ -384,6 +386,7 @@ const exportPDF = async () => {
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-2 py-1">Name</th>
+                                <th class="px-2 py-1">Category</th>
                                 <th class="px-2 py-1">SKU</th>
                                 <th class="px-2 py-1">Cost</th>
                                 <th class="px-2 py-1">Sell</th>
@@ -393,6 +396,7 @@ const exportPDF = async () => {
                         <tbody>
                             <tr v-for="product in productMargins" :key="product.id" class="border-b">
                                 <td class="px-2 py-1">{{ product.name }}</td>
+                                <td class="px-2 py-1">{{ product.category }}</td>
                                 <td class="px-2 py-1">{{ product.sku }}</td>
                                 <td class="px-2 py-1">£{{ product.cost.toFixed(2) }}</td>
                                 <td class="px-2 py-1">£{{ product.sell.toFixed(2) }}</td>

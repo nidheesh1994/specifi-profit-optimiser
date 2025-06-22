@@ -41,12 +41,13 @@ class SettingController extends Controller
     public function testConnection(Request $request)
     {
         $provider = $request->provider;
+        $modal_name = $request->model_name;
         $apiKey = $request->api_key;
 
         try {
             if ($provider === 'openai') {
                 $response = Http::withToken($apiKey)->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-3.5-turbo',
+                    'model' => $modal_name,
                     'messages' => [
                         ['role' => 'system', 'content' => 'ping']
                     ]

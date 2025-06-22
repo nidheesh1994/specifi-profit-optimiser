@@ -36,7 +36,7 @@ const form = useForm({
 
 const availableModels = computed(() => {
     if (form.llm_provider === 'openai') {
-        return ['gpt-4o', 'o4-mini', 'gpt-4.1'];
+        return ['gpt-4o', 'gpt-4.1', 'gpt-4', 'gpt-3.5-turbo'];
     }
     return [];
 });
@@ -49,6 +49,7 @@ const checkConnection = async () => {
     try {
         const response = await axios.post(route('settings.test-connection'), {
             provider: form.llm_provider,
+            modal_name: form.model_name,
             api_key: form.api_key,
             model_name: form.model_name,
         });

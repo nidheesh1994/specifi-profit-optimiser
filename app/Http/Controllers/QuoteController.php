@@ -210,21 +210,41 @@ class QuoteController extends Controller
         ]);
 
         $context = $request->input('context');
-
         $settings = Setting::where('user_id', Auth::id())->firstOrFail();
 
         $productIds = $quote->products ?? [];
         $products = Product::whereIn('id', $productIds)->get();
 
+        // Collect categories in the quote
+        $categories = $products->pluck('category')->unique()->filter();
+
+        // Build alternatives for each category, excluding current products
+        $alternativesByCategory = [];
+        foreach ($categories as $category) {
+            $alternatives = Product::where('category', $category)
+                ->whereNotIn('id', $productIds)
+                ->take(10) // Limit for performance/readability
+                ->get(['name', 'sku', 'trade_price', 'retail_price', 'id']);
+
+            $alternativesByCategory[$category] = $alternatives->map(function ($p) {
+                return [
+                    'name' => $p->name,
+                    'sku' => $p->sku,
+                    'cost' => $p->trade_price,
+                    'sell' => $p->retail_price,
+                ];
+            });
+        }
+
         $input = [
-            // 'customer' => $quote->customer_name,
-            // 'address' => $quote->customer_address,
             'products' => $products->map(fn($p) => [
                 'name' => $p->name,
                 'sku' => $p->sku,
                 'cost' => $p->trade_price,
                 'sell' => $p->retail_price,
+                'category' => $p->category,
             ]),
+            'alternatives_by_category' => $alternativesByCategory,
             'labor_hours' => $quote->labor_hours,
             'labor_cost' => $quote->labor_cost_per_hour,
             'fixed_overheads' => $quote->fixed_overheads,
@@ -233,11 +253,11 @@ class QuoteController extends Controller
             'health_status' => $quote->health_status,
         ];
 
-        $prompt = "Given the quote data below, provide details for the following. Below is the instructions. Use your own headings:\n
+        $prompt = "Given the quote data below, provide details for the following. Use your own headings:\n
                     - Adjustments to meet target margins\n
                     - Labor or resource allocation improvements\n
-                    - Suggested product swaps if needed\n
-                    - profitability summary\n";
+                    - Suggested product swaps if needed (use the 'alternatives_by_category' field for relevant swaps)\n
+                    - Profitability summary\n";
 
         if (!empty($context)) {
             $prompt .= "Additional context to consider:\n" . $context . "\n";
@@ -249,9 +269,9 @@ class QuoteController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $settings->api_key,
             ])->post('https://api.openai.com/v1/chat/completions', [
-                        'model' => "gpt-4.1",
+                        'model' => $settings->model_name ?? "gpt-4.1",
                         'messages' => [
-                            ['role' => 'system', 'content' => 'You are a helpful business analyst. You starts with "Here’s an analysis and recommendations based on your quote data:"'],
+                            ['role' => 'system', 'content' => 'You are a helpful business analyst. You start with "Here’s an analysis and recommendations based on your quote data:"'],
                             ['role' => 'user', 'content' => $prompt],
                         ],
                         'max_tokens' => 500
@@ -260,13 +280,13 @@ class QuoteController extends Controller
             return redirect()->route('quotes.show', $quote->id)->withErrors(['error' => 'Failed to generate AI suggestions: ' . $e->getMessage()]);
         }
 
-
         $aiText = $response['choices'][0]['message']['content'] ?? 'AI response unavailable.';
         $quote->ai_suggestions = $aiText;
-        $quote->ai_model_used = $settings->llm_model;
+        $quote->ai_model_used = $settings->model_name ?? "gpt-4.1";
         $quote->last_ai_feedback = now();
         $quote->save();
 
         return redirect()->route('quotes.show', $quote->id);
     }
+
 }
