@@ -218,8 +218,9 @@ const exportPDF = async () => {
                     <strong class="underline">Calculations</strong><br />
                     <p><strong>Total cost: </strong> £{{ quote.total_trade_price }}</p>
                     <p><strong>Total sell:</strong> £{{ quote.total_retail_price }}</p>
-                    <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
+                    <p><strong>Total Labour cost:</strong> £{{ quote.labor_hours * quote.labor_cost_per_hour }}</p>
                     <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
+                    <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
                 </div>
 
 
@@ -426,8 +427,9 @@ const exportPDF = async () => {
                         <strong class="underline">Calculations</strong><br />
                         <p><strong>Total cost: </strong> £{{ quote.total_trade_price }}</p>
                         <p><strong>Total sell:</strong> £{{ quote.total_retail_price }}</p>
-                        <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
+                        <p><strong>Total Labour cost:</strong> £{{ quote.labor_hours * quote.labor_cost_per_hour }}</p>
                         <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
+                        <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
                     </div>
 
                     <div v-if="quote.ai_suggestions && showSuggestion" class="mt-4">

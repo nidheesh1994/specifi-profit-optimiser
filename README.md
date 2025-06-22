@@ -1,61 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Specifi Profit Optimiser – README
 
-## About Laravel
+## Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This project is a working prototype of the Specifi Profit Optimiser, designed as a technical assessment for the Senior Developer role at Specifi. The tool helps AV dealers and businesses assess quote profitability and receive actionable AI-driven suggestions for improvement.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Stack & Versions
 
-## Learning Laravel
+- **Framework:** Laravel 10.x (Backend), Inertia.js + Vue 3 (Frontend)
+- **Styling:** TailwindCSS
+- **PDF Export:** jsPDF & html2canvas
+- **AI Integration:** OpenAI GPT-4 (Only OpenAI implemented, others disabled)
+- **Database:** MySQL (or SQLite, for local setup)
+- **Other:** Axios (API calls), Inertia Progress (loading/progress bar)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. **Clone the repository**
 
-## Laravel Sponsors
+    ```bash
+    git clone https://github.com/yourusername/specifi-profit-optimiser.git
+    cd specifi-profit-optimiser
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Install backend dependencies**
 
-### Premium Partners
+    ```bash
+    composer install
+    cp .env.example .env
+    php artisan key:generate
+    # Edit your .env for DB config
+    php artisan migrate --seed
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+3. **Install frontend dependencies**
 
-## Contributing
+    ```bash
+    npm install
+    npm run dev
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Run the application**
 
-## Code of Conduct
+    ```bash
+    php artisan serve
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. **Access the app**
 
-## Security Vulnerabilities
+    Go to [http://localhost:8000](http://localhost:8000) in your browser.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Functionality
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Input Form:** Enter products/services (cost, sell price, quantity), labor hours, labor cost/hour, overheads, and target margin.
+- **Quote Calculations:**
+    - Calculates line item margins, total gross profit, net profit after labor & overheads, overall margin.
+    - Flags low-margin products (<10% red, <20% yellow).
+    - Health indicator (green/amber/red) based on margin thresholds.
+- **AI Suggestions:** Calls OpenAI API (gpt-4) to provide improvements on margin, labor, product swaps, and a client-friendly summary. (Other LLM providers are disabled in this version.)
+- **Quote Editing:** Edit products, constraints, and customer details via modals.
+- **Export to PDF:** Preview and export the quote (with all calculations and AI feedback) as a nicely formatted PDF.
+- **Settings:** Save your OpenAI key, select model, and check API connection status.
+
+---
+
+## Assumptions & Approach
+
+- **Calculations:**
+    - **Margin** = ((Sell Price - Cost) / Sell Price) * 100
+    - **Gross Profit** = Sum over all products [(Sell Price - Cost) * Quantity]
+    - **Labor Cost** = Labor Hours × Labor Cost per Hour
+    - **Net Profit** = Gross Profit - Labor Cost - Fixed Overheads
+    - **Calculated Margin** = (Net Profit / (Total Sell Price)) * 100
+- **Low Margin Warnings:** Items with margin <10% are red, <20% are yellow.
+- **Health Status:** Based on calculated margin (configurable thresholds, e.g., <10% red, <20% amber, else green).
+- **AI Integration:** Only OpenAI is enabled; API key is required per user. Hugging Face/self-hosted can be enabled in future versions.
+- **UX:** Modals are used for a clean, single-page experience; progress bar appears on AI or connection actions.
+- **Export:** Entire quote preview (not just visible area) is exported as PDF, including AI feedback.
+
+---
+
+## How It Works (User Flow)
+
+1. **Add/Edit Quote:** Select products, enter labor/financials, and save.
+2. **Get AI Suggestions:** Click "Generate AI Suggestion" to fetch recommendations from OpenAI.
+3. **Edit/Review:** You can adjust details as needed; suggestions can be regenerated.
+4. **Export:** Click "Export Quote" for a preview and export to PDF.
+5. **Settings:** Go to settings to configure your OpenAI key and test the connection.
+
+---
+
+## Limitations & Future Improvements
+
+- Only OpenAI is currently supported for AI suggestions.
+- Hugging Face/self-hosted LLMs are planned but disabled.
+- No persistent "Quote History" or user authentication (demo scope).
+- Frontend validation is minimal; security is for demo use only.
+- Product list is seeded for simulation; in real apps, connect to live data.
+
+---
+
+## Author & Contact
+
+Built by Nidheesh Jagadeesan for Specifi's technical assessment.
+
+If you have any questions, please reach out via email or GitHub.
+
+---
