@@ -2,6 +2,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const props = defineProps({
     quote: Object,
@@ -117,6 +119,24 @@ const saveCustomerDetails = () => {
 };
 
 
+const showExportModal = ref(false);
+const exportContentRef = ref(null);
+
+
+const exportPDF = async () => {
+    const element = exportContentRef.value;
+    const canvas = await html2canvas(element, { scale: 2, height: element.scrollHeight });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pageWidth - 40;
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, 'PNG', 20, 20, pdfWidth, pdfHeight);
+    pdf.save(`Quote-${props.quote.id}.pdf`);
+};
 
 </script>
 
@@ -131,6 +151,7 @@ const saveCustomerDetails = () => {
         <div class="py-12">
             <div class="max-w-5xl mx-auto bg-white p-6 rounded shadow">
                 <div class="mb-6">
+                    <p><strong>ID:</strong> #{{ quote.id }}</p>
                     <p><strong>Customer:</strong> {{ quote.customer_name }}</p>
                     <p><strong>Address:</strong> {{ quote.customer_address }}</p>
                     <p><strong>Date:</strong> {{ new Date(quote.created_at).toLocaleDateString() }}</p>
@@ -148,6 +169,10 @@ const saveCustomerDetails = () => {
                     <button @click="openCustomerModal"
                         class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
                         Edit Customer
+                    </button>
+                    <button @click="showExportModal = true"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                        Export Quote
                     </button>
                 </div>
 
@@ -201,7 +226,9 @@ const saveCustomerDetails = () => {
                     <button @click="generateAISuggestion"
                         class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
                         :disabled="loadingSuggestion">
-                        {{ loadingSuggestion ? "Generating Suggestion..." : (needsNewSuggestion ? "Generate New AI Suggestion" : "Generate AI Suggestion") }}
+                        {{ loadingSuggestion ? "Generating Suggestion..." : (needsNewSuggestion ?
+                            "Generate New AI Suggestion" :
+                            "Generate AI Suggestion") }}
                     </button>
 
                 </div>
@@ -337,6 +364,70 @@ const saveCustomerDetails = () => {
                 </div>
             </div>
         </div>
+
+        <!-- Export Modal -->
+        <div v-if="showExportModal"
+            class="fixed inset-0 z-50 bg-black bg-opacity-50 flex pt-10 items-center justify-center overflow-y-auto">
+            <div class="bg-white p-6 rounded shadow-lg max-w-4xl w-full mt-auto mb-auto">
+                <h3 class="text-lg font-semibold mb-4">Export Quote Preview</h3>
+
+                <div ref="exportContentRef" class="bg-white text-black space-y-4 text-sm leading-relaxed pr-3">
+                    <div class="mb-4">
+                        <h2 class="text-xl font-bold">Quote Summary</h2>
+                        <p><strong>ID:</strong> #{{ quote.id }}</p>
+                        <p><strong>Customer:</strong> {{ quote.customer_name }}</p>
+                        <p><strong>Address:</strong> {{ quote.customer_address }}</p>
+                        <p><strong>Date:</strong> {{ new Date(quote.created_at).toLocaleDateString() }}</p>
+                    </div>
+
+                    <table class="w-full text-left border mt-2 text-xs">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-2 py-1">Name</th>
+                                <th class="px-2 py-1">SKU</th>
+                                <th class="px-2 py-1">Cost</th>
+                                <th class="px-2 py-1">Sell</th>
+                                <th class="px-2 py-1">Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in productMargins" :key="product.id" class="border-b">
+                                <td class="px-2 py-1">{{ product.name }}</td>
+                                <td class="px-2 py-1">{{ product.sku }}</td>
+                                <td class="px-2 py-1">£{{ product.cost.toFixed(2) }}</td>
+                                <td class="px-2 py-1">£{{ product.sell.toFixed(2) }}</td>
+                                <td class="px-2 py-1">{{ product.margin.toFixed(2) }}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-4">
+                        <p><strong>Estimated Labor Hours:</strong> {{ quote.labor_hours }}</p>
+                        <p><strong>Labor Cost Per Hour:</strong> £{{ quote.labor_cost_per_hour }}</p>
+                        <p><strong>Fixed Overheads:</strong> £{{ quote.fixed_overheads }}</p>
+                        <p><strong>Target Profit Margin:</strong> {{ quote.target_profit_margin }}%</p>
+                        <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
+                        <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
+                    </div>
+
+                    <div v-if="quote.ai_suggestions && showSuggestion" class="mt-4">
+                        <h4 class="font-semibold mb-1">AI Suggestion</h4>
+                        <div class="whitespace-pre-line text-gray-800 text-sm border p-2 rounded bg-gray-50">
+                            {{ quote.ai_suggestions }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-2">
+                    <button @click="showExportModal = false"
+                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button @click="exportPDF" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Export
+                        to
+                        PDF</button>
+                </div>
+            </div>
+        </div>
+
 
     </AuthenticatedLayout>
 </template>
