@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/quotes/{quote}/generate-suggestion', [QuoteController::class, 'generateSuggestion'])->name('quotes.generateSuggestion');
     Route::post('/quotes/{quote}/update-products', [QuoteController::class, 'updateProducts'])->name('quotes.updateProducts');
     Route::post('/quotes/{quote}/update-details', [QuoteController::class, 'updateDetails'])->name('quotes.updateDetails');
+    Route::post('/quotes/{quote}/update-customer', [QuoteController::class, 'updateCustomer'])->name('quotes.updateCustomer');
+
 });
 
 require __DIR__.'/auth.php';

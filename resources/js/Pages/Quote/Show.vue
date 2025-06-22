@@ -97,6 +97,26 @@ const saveConstraints = () => {
     });
 };
 
+const showCustomerModal = ref(false);
+const customerForm = ref({
+    customer_name: props.quote.customer_name,
+    customer_address: props.quote.customer_address,
+});
+
+const openCustomerModal = () => {
+    showCustomerModal.value = true;
+};
+
+const saveCustomerDetails = () => {
+    router.post(route('quotes.updateCustomer', props.quote.id), customerForm.value, {
+        preserveScroll: true,
+        onSuccess: () => {
+            showCustomerModal.value = false;
+        },
+    });
+};
+
+
 
 </script>
 
@@ -124,6 +144,10 @@ const saveConstraints = () => {
                     <button @click="openEditConstraintsModal"
                         class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
                         Edit Constraints
+                    </button>
+                    <button @click="openCustomerModal"
+                        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                        Edit Customer
                     </button>
                 </div>
 
@@ -194,6 +218,37 @@ const saveConstraints = () => {
                 </div>
             </div>
         </div>
+
+        <!-- Customer Modal -->
+        <div v-if="showCustomerModal"
+            class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg max-w-lg w-full">
+                <h3 class="text-lg font-semibold mb-4">Edit Customer Details</h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Customer Name</label>
+                        <input type="text" v-model="customerForm.customer_name"
+                            class="w-full border px-3 py-2 rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Customer Address</label>
+                        <textarea v-model="customerForm.customer_address" rows="3"
+                            class="w-full border px-3 py-2 rounded"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-2">
+                    <button @click="showCustomerModal = false"
+                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button @click="saveCustomerDetails"
+                        class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Product Modal -->
         <div v-if="showProductModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">

@@ -39,30 +39,30 @@ class SettingController extends Controller
     }
 
     public function testConnection(Request $request)
-{
-    $provider = $request->provider;
-    $apiKey = $request->api_key;
+    {
+        $provider = $request->provider;
+        $apiKey = $request->api_key;
 
-    try {
-        if ($provider === 'openai') {
-            $response = Http::withToken($apiKey)->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [
-                    ['role' => 'system', 'content' => 'ping']
-                ]
-            ]);
+        try {
+            if ($provider === 'openai') {
+                $response = Http::withToken($apiKey)->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-3.5-turbo',
+                    'messages' => [
+                        ['role' => 'system', 'content' => 'ping']
+                    ]
+                ]);
 
-            if ($response->successful()) {
-                return response()->json(['status' => 'success']);
+                if ($response->successful()) {
+                    return response()->json(['status' => 'success']);
+                }
             }
+
+            // Add handling for Hugging Face / self-hosted here...
+
+            return response()->json(['status' => 'fail'], 422);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
-
-        // Add handling for Hugging Face / self-hosted here...
-
-        return response()->json(['status' => 'fail'], 422);
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
     }
-}
 
 }

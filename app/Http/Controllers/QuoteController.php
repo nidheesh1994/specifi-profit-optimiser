@@ -173,6 +173,19 @@ class QuoteController extends Controller
         return back()->with('success', 'Quote details updated.');
     }
 
+    public function updateCustomer(Request $request, Quote $quote)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_address' => 'required|string',
+        ]);
+
+        $quote->update($validated);
+
+        return redirect()->back()->with('success', 'Customer details updated.');
+    }
+
+
 
 
     public function show(Quote $quote)
