@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project is a working prototype of the Specifi Profit Optimiser, designed as a technical assessment for the Senior Developer role at Specifi. The tool helps AV dealers and businesses assess quote profitability and receive actionable AI-driven suggestions for improvement.
+This project is a working prototype of the Specifi Profit Optimiser. The tool helps AV dealers and businesses assess quote profitability and receive actionable AI-driven suggestions for improvement.
 
 ---
 
@@ -108,7 +108,7 @@ This project is a working prototype of the Specifi Profit Optimiser, designed as
 
 ## Author & Contact
 
-Built by Nidheesh Jagadeesan for Specifi's technical assessment.
+Built by Nidheesh Jagadeesan.
 
 If you have any questions, please reach out via email or GitHub.
 
