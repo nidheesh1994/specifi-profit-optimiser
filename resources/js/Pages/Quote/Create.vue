@@ -115,6 +115,7 @@ const createQuote = () => {
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2">Name</th>
+                                <th class="px-4 py-2">Category</th>
                                 <th class="px-4 py-2">SKU</th>
                                 <th class="px-4 py-2">MPN</th>
                                 <th class="px-4 py-2">Cost</th>
@@ -124,6 +125,7 @@ const createQuote = () => {
                         <tbody>
                             <tr v-for="product in selectedProducts" :key="product.id" class="border-b">
                                 <td class="px-4 py-2">{{ product.name }}</td>
+                                <td class="px-4 py-2">{{ product.category }}</td>
                                 <td class="px-4 py-2">{{ product.sku }}</td>
                                 <td class="px-4 py-2">{{ product.mpn }}</td>
                                 <td class="px-4 py-2">£{{ product.trade_price }}</td>
@@ -186,6 +188,7 @@ const createQuote = () => {
                             <tr>
                                 <th class="px-4 py-2">Select</th>
                                 <th class="px-4 py-2">Name</th>
+                                <th class="px-4 py-2">Category</th>
                                 <th class="px-4 py-2">SKU</th>
                                 <th class="px-4 py-2">MPN</th>
                                 <th class="px-4 py-2">Cost</th>
@@ -198,6 +201,7 @@ const createQuote = () => {
                                     <input type="checkbox" :value="product" v-model="selectedTemp" />
                                 </td>
                                 <td class="px-4 py-2">{{ product.name }}</td>
+                                <td class="px-4 py-2">{{ product.category }}</td>
                                 <td class="px-4 py-2">{{ product.sku }}</td>
                                 <td class="px-4 py-2">{{ product.mpn }}</td>
                                 <td class="px-4 py-2">£{{ product.trade_price }}</td>
