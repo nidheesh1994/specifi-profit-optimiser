@@ -85,6 +85,8 @@ class QuoteController extends Controller
             'target_profit_margin' => $validated['target_profit_margin'],
             'calculated_margin' => $calculated_margin,
             'total_profit' => $net_profit,
+            'total_trade_price' => $total_cost,
+            'total_retail_price' => $total_sell,
             'health_status' => $health_status,
         ]);
 
@@ -122,6 +124,8 @@ class QuoteController extends Controller
             'products' => $validated['products'],
             'calculated_margin' => $calculated_margin,
             'total_profit' => $net_profit,
+            'total_trade_price' => $total_cost,
+            'total_retail_price' => $total_sell,
             'health_status' => $health_status,
         ]);
 

@@ -65,7 +65,10 @@ const generateAISuggestion = () => {
         { context: aiContext.value },
         {
             preserveScroll: true,
-            onFinish: () => loadingSuggestion.value = false
+            onFinish: () => {
+                loadingSuggestion.value = false;
+                showSuggestion.value = true;
+            }
         }
     );
 };
@@ -208,6 +211,13 @@ const exportPDF = async () => {
                     <p><strong>Labor Cost Per Hour:</strong> £{{ quote.labor_cost_per_hour }}</p>
                     <p><strong>Fixed Overheads:</strong> £{{ quote.fixed_overheads }}</p>
                     <p><strong>Target Profit Margin:</strong> {{ quote.target_profit_margin }}%</p>
+
+                </div>
+
+                <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2">
+                    <strong class="underline">Calculations</strong><br />
+                    <p><strong>Total cost: </strong> £{{ quote.total_trade_price }}</p>
+                    <p><strong>Total sell:</strong> £{{ quote.total_retail_price }}</p>
                     <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
                     <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
                 </div>
@@ -410,6 +420,12 @@ const exportPDF = async () => {
                         <p><strong>Labor Cost Per Hour:</strong> £{{ quote.labor_cost_per_hour }}</p>
                         <p><strong>Fixed Overheads:</strong> £{{ quote.fixed_overheads }}</p>
                         <p><strong>Target Profit Margin:</strong> {{ quote.target_profit_margin }}%</p>
+                    </div>
+
+                    <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
+                        <strong class="underline">Calculations</strong><br />
+                        <p><strong>Total cost: </strong> £{{ quote.total_trade_price }}</p>
+                        <p><strong>Total sell:</strong> £{{ quote.total_retail_price }}</p>
                         <p><strong>Calculated Margin:</strong> {{ quote.calculated_margin }}%</p>
                         <p><strong>Total Profit:</strong> £{{ Number(quote.total_profit).toFixed(2) }}</p>
                     </div>

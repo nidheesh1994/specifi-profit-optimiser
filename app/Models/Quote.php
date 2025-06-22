@@ -22,6 +22,8 @@ class Quote extends Model
         'target_profit_margin',
         'calculated_margin',
         'total_profit',
+        'total_trade_price',
+        'total_retail_price',
         'health_status',
         'ai_model_used',
         'ai_suggestions',
@@ -38,6 +40,8 @@ class Quote extends Model
         'target_profit_margin' => 'decimal:2',
         'calculated_margin' => 'decimal:2',
         'total_profit' => 'decimal:2',
+        'total_trade_price' => 'decimal:2',
+        'total_retail_price' => 'decimal:2',
         'chat_started_at' => 'datetime',
         'last_ai_feedback' => 'datetime',
     ];
