@@ -101,6 +101,8 @@ This project is a working prototype of the Specifi Profit Optimiser. The tool he
 4. **Export:** Click "Export Quote" for a preview and export to PDF.
 5. **Settings:** Go to settings to configure your OpenAI key and test the connection.
 
+*Check the video in the repository.*
+
 ---
 
 ## Limitations & Future Improvements
